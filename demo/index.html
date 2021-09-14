@@ -30,6 +30,8 @@
     const slider = new DoubleSlider(".bs-multi-range", 0, 100, 16)
 
     document.querySelector(".bs-multi-range").addEventListener("change", event => console.log(event.detail.target))
+
+    setTimeout(() => slider.setMax(50), 1000)
 </script>
 </body>
 </html>

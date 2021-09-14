@@ -1,12 +1,14 @@
 var DoubleSlider = (function () {
-    function DoubleSlider(el, min, max, sliderWidth) {
+    function DoubleSlider(el, min, max, sliderWidth, autoUpdate) {
         var _this = this;
         if (min === void 0) { min = 0; }
         if (max === void 0) { max = 100; }
         if (sliderWidth === void 0) { sliderWidth = 16; }
+        if (autoUpdate === void 0) { autoUpdate = true; }
         this.min = min;
         this.max = max;
         this.sliderWidth = sliderWidth;
+        this.autoUpdate = autoUpdate;
         if (typeof el === "string")
             this.el = document.querySelector(el);
         else
@@ -16,8 +18,8 @@ var DoubleSlider = (function () {
         var boundingClientRect = this.el.getBoundingClientRect();
         this.width = boundingClientRect.width;
         this.x = boundingClientRect.x;
-        this.sliderMin = new Thumb(this.el.querySelector(".lower"), this);
-        this.sliderMax = new Thumb(this.el.querySelector(".upper"), this);
+        this.sliderMin = new DoubleSlider.Thumb(this.el.querySelector(".lower"), this);
+        this.sliderMax = new DoubleSlider.Thumb(this.el.querySelector(".upper"), this);
         this.sliderMin.setPercent(min);
         this.sliderMax.setPercent(max);
         this.diff = this.el.querySelector(".track-diff");
@@ -28,6 +30,11 @@ var DoubleSlider = (function () {
         });
     }
     DoubleSlider.prototype.mousePercent = function () {
+        if (this.autoUpdate) {
+            var newBoundingClientRect = this.el.getBoundingClientRect();
+            this.x = newBoundingClientRect.x;
+            this.width = newBoundingClientRect.width;
+        }
         var val = ((this.mouseX - this.x) / this.width) * 100;
         if (val < 0)
             return 0;
@@ -47,49 +54,73 @@ var DoubleSlider = (function () {
         this.updateDiff();
         this.el.dispatchEvent(new CustomEvent("change", { detail: { target: this } }));
     };
+    DoubleSlider.prototype.getMin = function () {
+        return this.min;
+    };
+    DoubleSlider.prototype.getMax = function () {
+        return this.max;
+    };
+    DoubleSlider.prototype.setMin = function (num) {
+        if (num === void 0) { num = 0; }
+        if (num >= this.max)
+            return;
+        this.min = num;
+        this.sliderMin.setPercent(this.min);
+        this.change();
+    };
+    DoubleSlider.prototype.setMax = function (num) {
+        if (num === void 0) { num = 0; }
+        if (num <= this.min)
+            return;
+        this.max = num;
+        this.sliderMax.setPercent(this.max);
+        this.change();
+    };
     DoubleSlider.prototype.updateDiff = function () {
         if (!this.diff)
             return;
         this.diff.style.left = this.min + "%";
         this.diff.style.width = this.max - this.min + "%";
     };
+    DoubleSlider.Thumb = (function () {
+        function class_1(el, parent) {
+            var _this = this;
+            this.percent = 0;
+            this.interval = 0;
+            if (!el)
+                throw new Error("Thumb was undefined");
+            this.parent = parent;
+            this.el = el;
+            this.el.addEventListener("mousedown", function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                _this.interval = setInterval(function () {
+                    _this.drag();
+                }, 2);
+            });
+        }
+        class_1.prototype.setPercent = function (percent, update) {
+            if (update === void 0) { update = true; }
+            this.percent = percent;
+            this.el.style.left = "calc(" + percent + "%" + " - " + this.parent.sliderWidth / 2 + "px)";
+            if (!update)
+                return;
+            this.parent.change();
+        };
+        class_1.prototype.getPercent = function () {
+            return this.percent;
+        };
+        class_1.prototype.stopDrag = function () {
+            if (!this.interval)
+                return;
+            clearInterval(this.interval);
+            this.interval = 0;
+        };
+        class_1.prototype.drag = function () {
+            this.setPercent(this.parent.mousePercent());
+        };
+        return class_1;
+    }());
     return DoubleSlider;
-}());
-var Thumb = (function () {
-    function Thumb(el, parent) {
-        var _this = this;
-        this.percent = 0;
-        this.interval = 0;
-        if (!el)
-            throw new Error("Thumb was undefined");
-        this.parent = parent;
-        this.el = el;
-        this.el.addEventListener("mousedown", function () {
-            _this.interval = setInterval(function () {
-                _this.drag();
-            }, 2);
-        });
-    }
-    Thumb.prototype.drag = function () {
-        this.setPercent(this.parent.mousePercent());
-    };
-    Thumb.prototype.setPercent = function (percent, update) {
-        if (update === void 0) { update = true; }
-        this.percent = percent;
-        this.el.style.left = "calc(" + percent + "%" + " - " + this.parent.sliderWidth / 2 + "px)";
-        if (!update)
-            return;
-        this.parent.change();
-    };
-    Thumb.prototype.getPercent = function () {
-        return this.percent;
-    };
-    Thumb.prototype.stopDrag = function () {
-        if (!this.interval)
-            return;
-        clearInterval(this.interval);
-        this.interval = 0;
-    };
-    return Thumb;
 }());
 //# sourceMappingURL=doubleSlider.js.map

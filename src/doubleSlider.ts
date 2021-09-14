@@ -1,24 +1,24 @@
 class DoubleSlider {
-    public readonly sliderWidth : number
+    public readonly sliderWidth: number
+    public readonly el: HTMLElement
+    private readonly autoUpdate: boolean
+    private readonly diff: HTMLElement | null
+    private min: number
+    private max: number
+    private width: number
+    private x: number
+    private mouseX: number
+    // @ts-ignore
+    private sliderMin: DoubleSlider.Thumb
+    // @ts-ignore
+    private sliderMax: DoubleSlider.Thumb
 
-    public min : number
-    public max : number
 
-    public readonly width: number
-    private readonly x: number
-    private mouseX : number
-
-    private sliderMin : Thumb
-    private sliderMax : Thumb
-
-    public readonly el : HTMLElement
-
-    private readonly diff : HTMLElement | null
-
-    constructor(el: string | HTMLElement, min = 0, max = 100, sliderWidth = 16) {
+    constructor(el: string | HTMLElement, min = 0, max = 100, sliderWidth = 16, autoUpdate = true) {
         this.min = min
         this.max = max
         this.sliderWidth = sliderWidth
+        this.autoUpdate = autoUpdate
 
         if (typeof el === "string") this.el = document.querySelector(el)
         else this.el = el
@@ -28,8 +28,8 @@ class DoubleSlider {
         this.width = boundingClientRect.width
         this.x = boundingClientRect.x
 
-        this.sliderMin = new Thumb(this.el.querySelector(".lower"), this)
-        this.sliderMax = new Thumb(this.el.querySelector(".upper"), this)
+        this.sliderMin = new DoubleSlider.Thumb(this.el.querySelector(".lower"), this)
+        this.sliderMax = new DoubleSlider.Thumb(this.el.querySelector(".upper"), this)
 
         this.sliderMin.setPercent(min)
         this.sliderMax.setPercent(max)
@@ -43,17 +43,21 @@ class DoubleSlider {
         })
     }
 
-    public mousePercent() : number {
+    public mousePercent(): number {
+        if (this.autoUpdate) {
+            const newBoundingClientRect = this.el.getBoundingClientRect()
+            this.x = newBoundingClientRect.x
+            this.width = newBoundingClientRect.width
+        }
         const val = ((this.mouseX - this.x) / this.width) * 100
         if (val < 0) return 0
         if (val > 100) return 100
         return val
     }
 
-    public change() : void {
+    public change(): void {
         const newMin = this.sliderMin.getPercent(), newMax = this.sliderMax.getPercent()
-        if (newMax - newMin - 1 <= 0)
-        {
+        if (newMax - newMin - 1 <= 0) {
             this.sliderMin.setPercent(this.min, false)
             this.sliderMax.setPercent(this.max, false)
             return
@@ -64,38 +68,55 @@ class DoubleSlider {
         this.el.dispatchEvent(new CustomEvent("change", {detail: {target: this}}))
     }
 
-    private updateDiff() : void {
+    public getMin(): number {
+        return this.min
+    }
+
+    public getMax(): number {
+        return this.max
+    }
+
+    public setMin(num = 0) {
+        if (num >= this.max) return
+        this.min = num
+        this.sliderMin.setPercent(this.min)
+        this.change()
+    }
+
+    public setMax(num = 0) {
+        if (num <= this.min) return
+        this.max = num
+        this.sliderMax.setPercent(this.max)
+        this.change()
+    }
+
+    private updateDiff(): void {
         if (!this.diff) return
 
         this.diff.style.left = this.min + "%"
         this.diff.style.width = this.max - this.min + "%"
     }
-
-}
-
-class Thumb {
-    public readonly el : HTMLElement
+    static Thumb = class {
+    public readonly el: HTMLElement
 
     private percent = 0
     private interval = 0
     private readonly parent: DoubleSlider
 
-    constructor(el : HTMLElement | null, parent: DoubleSlider) {
+    constructor(el: HTMLElement | null, parent: DoubleSlider) {
         if (!el) throw new Error("Thumb was undefined")
 
         this.parent = parent
 
         this.el = el
-        this.el.addEventListener("mousedown", () => {
+        this.el.addEventListener("mousedown", event => {
+            event.preventDefault()
+            event.stopPropagation()
             // @ts-ignore
             this.interval = setInterval(() => {
                 this.drag()
             }, 2)
         })
-    }
-
-    private drag() {
-        this.setPercent(this.parent.mousePercent())
     }
 
     public setPercent(percent: number, update = true) {
@@ -105,7 +126,7 @@ class Thumb {
         this.parent.change()
     }
 
-    public getPercent() : number {
+    public getPercent(): number {
         return this.percent
     }
 
@@ -114,4 +135,9 @@ class Thumb {
         clearInterval(this.interval)
         this.interval = 0
     }
+
+    private drag() {
+        this.setPercent(this.parent.mousePercent())
+    }
+}
 }
