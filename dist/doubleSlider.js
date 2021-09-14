@@ -1,14 +1,16 @@
 var DoubleSlider = (function () {
-    function DoubleSlider(el, min, max, sliderWidth, autoUpdate) {
+    function DoubleSlider(el, min, max, sliderWidth, autoUpdate, emitEvents) {
         var _this = this;
         if (min === void 0) { min = 0; }
         if (max === void 0) { max = 100; }
         if (sliderWidth === void 0) { sliderWidth = 16; }
         if (autoUpdate === void 0) { autoUpdate = true; }
+        if (emitEvents === void 0) { emitEvents = true; }
         this.min = min;
         this.max = max;
         this.sliderWidth = sliderWidth;
         this.autoUpdate = autoUpdate;
+        this.emitEvents = emitEvents;
         if (typeof el === "string")
             this.el = document.querySelector(el);
         else
@@ -52,6 +54,8 @@ var DoubleSlider = (function () {
         this.min = newMin;
         this.max = newMax;
         this.updateDiff();
+        if (!this.emitEvents)
+            return;
         this.el.dispatchEvent(new CustomEvent("change", { detail: { target: this } }));
     };
     DoubleSlider.prototype.getMin = function () {

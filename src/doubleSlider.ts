@@ -2,6 +2,7 @@ class DoubleSlider {
     public readonly sliderWidth: number
     public readonly el: HTMLElement
     private readonly autoUpdate: boolean
+    private readonly emitEvents: boolean
     private readonly diff: HTMLElement | null
     private min: number
     private max: number
@@ -14,11 +15,12 @@ class DoubleSlider {
     private sliderMax: DoubleSlider.Thumb
 
 
-    constructor(el: string | HTMLElement, min = 0, max = 100, sliderWidth = 16, autoUpdate = true) {
+    constructor(el: string | HTMLElement, min = 0, max = 100, sliderWidth = 16, autoUpdate = true, emitEvents = true) {
         this.min = min
         this.max = max
         this.sliderWidth = sliderWidth
         this.autoUpdate = autoUpdate
+        this.emitEvents = emitEvents
 
         if (typeof el === "string") this.el = document.querySelector(el)
         else this.el = el
@@ -65,6 +67,7 @@ class DoubleSlider {
         this.min = newMin
         this.max = newMax
         this.updateDiff()
+        if (!this.emitEvents) return;
         this.el.dispatchEvent(new CustomEvent("change", {detail: {target: this}}))
     }
 
