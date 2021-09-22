@@ -1,5 +1,5 @@
 export default class DoubleSlider {
-    public readonly sliderWidth: number
+    public readonly thumbSize: number
     public readonly el: HTMLElement
     private readonly autoUpdate: boolean
     private readonly emitEvents: boolean
@@ -13,10 +13,10 @@ export default class DoubleSlider {
     private sliderMax: Thumb
 
 
-    constructor(el: string | HTMLElement, min = 0, max = 100, sliderWidth = 16, autoUpdate = true, emitEvents = true) {
+    constructor(el: string | HTMLElement, min = 0, max = 100, thumbSize = 16, autoUpdate = true, emitEvents = true) {
         this.min = min
         this.max = max
-        this.sliderWidth = sliderWidth
+        this.thumbSize = thumbSize
         this.autoUpdate = autoUpdate
         this.emitEvents = emitEvents
 
@@ -126,7 +126,7 @@ class Thumb {
 
     public setPercent(percent: number, update = true) {
         this.percent = percent
-        this.el.style.left = "calc(" + percent + "%" + " - " + this.parent.sliderWidth / 2 + "px)"
+        this.el.style.left = "calc(" + percent + "%" + " - " + this.parent.thumbSize / 2 + "px)"
         if (!update) return
         this.parent.change()
     }
