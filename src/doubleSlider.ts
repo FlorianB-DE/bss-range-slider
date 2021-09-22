@@ -1,4 +1,4 @@
-class DoubleSlider {
+export default class DoubleSlider {
     public readonly sliderWidth: number
     public readonly el: HTMLElement
     private readonly autoUpdate: boolean
@@ -9,10 +9,8 @@ class DoubleSlider {
     private width: number
     private x: number
     private mouseX: number
-    // @ts-ignore
-    private sliderMin: DoubleSlider.Thumb
-    // @ts-ignore
-    private sliderMax: DoubleSlider.Thumb
+    private sliderMin: Thumb
+    private sliderMax: Thumb
 
 
     constructor(el: string | HTMLElement, min = 0, max = 100, sliderWidth = 16, autoUpdate = true, emitEvents = true) {
@@ -30,8 +28,8 @@ class DoubleSlider {
         this.width = boundingClientRect.width
         this.x = boundingClientRect.x
 
-        this.sliderMin = new DoubleSlider.Thumb(this.el.querySelector(".lower"), this)
-        this.sliderMax = new DoubleSlider.Thumb(this.el.querySelector(".upper"), this)
+        this.sliderMin = new Thumb(this.el.querySelector(".lower"), this)
+        this.sliderMax = new Thumb(this.el.querySelector(".upper"), this)
 
         this.sliderMin.setPercent(min)
         this.sliderMax.setPercent(max)
@@ -43,6 +41,8 @@ class DoubleSlider {
             this.sliderMin.stopDrag()
             this.sliderMax.stopDrag()
         })
+
+        this.updateDiff()
     }
 
     public mousePercent(): number {
@@ -99,7 +99,9 @@ class DoubleSlider {
         this.diff.style.left = this.min + "%"
         this.diff.style.width = this.max - this.min + "%"
     }
-    static Thumb = class {
+}
+
+class Thumb {
     public readonly el: HTMLElement
 
     private percent = 0
@@ -142,5 +144,4 @@ class DoubleSlider {
     private drag() {
         this.setPercent(this.parent.mousePercent())
     }
-}
 }
