@@ -9,6 +9,7 @@
   "author": "",
   "license": "",
   "dependencies": {
+    "bootstrap-double-slider": "^1.0.2",
     "webpack": "^5.53.0",
     "webpack-cli": "^4.8.0"
   }
