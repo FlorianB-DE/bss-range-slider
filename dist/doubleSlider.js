@@ -1,13 +1,14 @@
 "use strict";
 exports.__esModule = true;
 var DoubleSlider = (function () {
-    function DoubleSlider(el, min, max, thumbSize, autoUpdate, emitEvents) {
+    function DoubleSlider(el, min, max, thumbSize, autoUpdate, emitEvents, clickTrack) {
         var _this = this;
         if (min === void 0) { min = 0; }
         if (max === void 0) { max = 100; }
         if (thumbSize === void 0) { thumbSize = 16; }
         if (autoUpdate === void 0) { autoUpdate = true; }
         if (emitEvents === void 0) { emitEvents = true; }
+        if (clickTrack === void 0) { clickTrack = true; }
         this.min = min;
         this.max = max;
         this.thumbSize = thumbSize;
@@ -19,6 +20,21 @@ var DoubleSlider = (function () {
             this.el = el;
         if (!this.el)
             throw new Error("Element was undefined");
+        if (clickTrack) {
+            var track = this.el.querySelector(".track");
+            if (!track)
+                throw new Error("track was null!");
+            track.style.cursor = "pointer";
+            var handler_1 = function (position) {
+                _this.mouseX = position;
+                var percent = _this.mousePercent(), thumb = Math.abs(_this.sliderMin.getPercent() - percent) <= Math.abs(_this.sliderMax.getPercent() - percent)
+                    ? _this.sliderMin
+                    : _this.sliderMax;
+                thumb.setPercent(percent);
+            };
+            track.addEventListener("click", function (event) { return handler_1(event.x); });
+            track.addEventListener("touchend", function (event) { return handler_1(DoubleSlider.getTouchPosition(event)); });
+        }
         var boundingClientRect = this.el.getBoundingClientRect();
         this.width = boundingClientRect.width;
         this.x = boundingClientRect.x;
@@ -27,22 +43,14 @@ var DoubleSlider = (function () {
         this.sliderMin.setPercent(min);
         this.sliderMax.setPercent(max);
         this.diff = this.el.querySelector(".track-diff");
+        var dragEnd = function () {
+            _this.sliderMin.stopDrag();
+            _this.sliderMax.stopDrag();
+        };
         window.addEventListener("mousemove", function (event) { return _this.mouseX = event.x; });
-        window.addEventListener("mouseup", function () {
-            _this.sliderMin.stopDrag();
-            _this.sliderMax.stopDrag();
-        });
-        window.addEventListener("touchmove", function (event) {
-            event = (typeof event.originalEvent === "undefined") ? event : event.originalEvent;
-            var touch = event.touches[0] || event.changedTouches[0];
-            if (!touch)
-                return;
-            _this.mouseX = touch.pageX;
-        });
-        window.addEventListener("touchend", function () {
-            _this.sliderMin.stopDrag();
-            _this.sliderMax.stopDrag();
-        });
+        window.addEventListener("mouseup", dragEnd);
+        window.addEventListener("touchmove", function (event) { return _this.mouseX = DoubleSlider.getTouchPosition(event); });
+        window.addEventListener("touchend", dragEnd);
         this.updateDiff();
     }
     DoubleSlider.prototype.mousePercent = function () {
@@ -99,6 +107,13 @@ var DoubleSlider = (function () {
             return;
         this.diff.style.left = this.min + "%";
         this.diff.style.width = this.max - this.min + "%";
+    };
+    DoubleSlider.getTouchPosition = function (event) {
+        event = (typeof event.originalEvent === "undefined") ? event : event.originalEvent;
+        var touch = event.touches[0] || event.changedTouches[0];
+        if (!touch)
+            return -1;
+        return touch.pageX;
     };
     return DoubleSlider;
 }());

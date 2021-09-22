@@ -23,10 +23,12 @@ js:
 ```typescript
 const DoubleSlider = require("bootstrap-double-slider")
 new DoubleSlider(el: HTMLElement | string, min: number, 
-    max: number, thumbSize: number, autoUpdate: boolean, emitEvents: boolean)
+    max: number, thumbSize: number, autoUpdate: boolean, 
+    emitEvents: boolean, clickTrack: boolean)
 ```
 
 #### min, max: position the sliders are at initialisation (in percent) (default 0, 100)
 #### thumbSize: only modify when overwriting the --thumb-size css variable and set it to the value in px (default: 16)
 #### autoUpdate: if set to true (default) the boundingClientRect gets updated every time values are changed (via drag/mouse or programmatically doesn't matter). Only set to false if you are sure your element never changes
 #### emitEvents: if set to true (default) a "change" event gets emitted
+#### clickTrack: if set to true (default) a click on the track element leads to a value change. The closest thumb will switch to clicked position

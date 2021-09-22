@@ -5,16 +5,17 @@ export default class DoubleSlider {
     private readonly autoUpdate: boolean
     private readonly emitEvents: boolean
     private readonly diff: HTMLElement | null
+    private readonly sliderMin: Thumb
+    private readonly sliderMax: Thumb
     private min: number
     private max: number
     private width: number
     private x: number
     private mouseX: number
-    private sliderMin: Thumb
-    private sliderMax: Thumb
 
 
-    constructor(el: string | HTMLElement, min = 0, max = 100, thumbSize = 16, autoUpdate = true, emitEvents = true) {
+    constructor(el: string | HTMLElement, min = 0, max = 100, thumbSize = 16,
+                autoUpdate = true, emitEvents = true, clickTrack = true) {
         this.min = min
         this.max = max
         this.thumbSize = thumbSize
@@ -24,6 +25,24 @@ export default class DoubleSlider {
         if (typeof el === "string") this.el = document.querySelector(el)
         else this.el = el
         if (!this.el) throw new Error("Element was undefined")
+
+        if (clickTrack) {
+            const track = this.el.querySelector(".track") as HTMLElement | null
+            if (!track) throw new Error("track was null!")
+            track.style.cursor = "pointer"
+
+            const handler = (position: number) => {
+                this.mouseX = position
+                const percent = this.mousePercent(),
+                    thumb = Math.abs(this.sliderMin.getPercent() - percent) <= Math.abs(this.sliderMax.getPercent() - percent)
+                        ? this.sliderMin
+                        : this.sliderMax
+                thumb.setPercent(percent)
+            }
+
+            track.addEventListener("click", event => handler(event.x))
+            track.addEventListener("touchend", event => handler(DoubleSlider.getTouchPosition(event)))
+        }
 
         const boundingClientRect = this.el.getBoundingClientRect()
         this.width = boundingClientRect.width
@@ -37,25 +56,17 @@ export default class DoubleSlider {
 
         this.diff = this.el.querySelector(".track-diff")
 
-        window.addEventListener("mousemove", event => this.mouseX = event.x)
-        window.addEventListener("mouseup", () => {
+        const dragEnd = () => {
             this.sliderMin.stopDrag()
             this.sliderMax.stopDrag()
-        })
+        }
+
+        window.addEventListener("mousemove", event => this.mouseX = event.x)
+        window.addEventListener("mouseup", dragEnd)
 
         // for explanation see https://stackoverflow.com/questions/41993176/determine-touch-position-on-tablets-with-javascript/61732450#61732450
-        window.addEventListener("touchmove", event => {
-            // @ts-ignore
-            event = (typeof event.originalEvent === "undefined") ? event : event.originalEvent
-            const touch = event.touches[0] || event.changedTouches[0]
-            if (!touch) return
-            this.mouseX = touch.pageX
-        })
-
-        window.addEventListener("touchend", () => {
-            this.sliderMin.stopDrag()
-            this.sliderMax.stopDrag()
-        })
+        window.addEventListener("touchmove", event => this.mouseX = DoubleSlider.getTouchPosition(event))
+        window.addEventListener("touchend", dragEnd)
 
         this.updateDiff()
     }
@@ -113,6 +124,14 @@ export default class DoubleSlider {
 
         this.diff.style.left = this.min + "%"
         this.diff.style.width = this.max - this.min + "%"
+    }
+
+    private static getTouchPosition(event: TouchEvent) : number {
+        // @ts-ignore
+        event = (typeof event.originalEvent === "undefined") ? event : event.originalEvent
+        const touch = event.touches[0] || event.changedTouches[0]
+        if (!touch) return -1
+        return touch.pageX
     }
 }
 
