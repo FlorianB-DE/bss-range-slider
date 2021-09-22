@@ -66,7 +66,8 @@ var DoubleSlider = (function () {
             return 100;
         return val;
     };
-    DoubleSlider.prototype.change = function () {
+    DoubleSlider.prototype.change = function (overrideEmit) {
+        if (overrideEmit === void 0) { overrideEmit = false; }
         var newMin = this.sliderMin.getPercent(), newMax = this.sliderMax.getPercent();
         if (newMax - newMin - 1 <= 0) {
             this.sliderMin.setPercent(this.min, false);
@@ -76,7 +77,7 @@ var DoubleSlider = (function () {
         this.min = newMin;
         this.max = newMax;
         this.updateDiff();
-        if (!this.emitEvents)
+        if (!this.emitEvents || overrideEmit)
             return;
         this.el.dispatchEvent(new CustomEvent("change", { detail: { target: this } }));
     };
@@ -86,21 +87,23 @@ var DoubleSlider = (function () {
     DoubleSlider.prototype.getMax = function () {
         return this.max;
     };
-    DoubleSlider.prototype.setMin = function (num) {
+    DoubleSlider.prototype.setMin = function (num, emit) {
         if (num === void 0) { num = 0; }
+        if (emit === void 0) { emit = true; }
         if (num >= this.max)
             return;
         this.min = num;
         this.sliderMin.setPercent(this.min);
-        this.change();
+        this.change(!emit);
     };
-    DoubleSlider.prototype.setMax = function (num) {
+    DoubleSlider.prototype.setMax = function (num, emit) {
         if (num === void 0) { num = 0; }
+        if (emit === void 0) { emit = true; }
         if (num <= this.min)
             return;
         this.max = num;
         this.sliderMax.setPercent(this.max);
-        this.change();
+        this.change(!emit);
     };
     DoubleSlider.prototype.updateDiff = function () {
         if (!this.diff)

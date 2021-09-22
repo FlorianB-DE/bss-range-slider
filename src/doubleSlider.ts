@@ -3,10 +3,11 @@ export default class DoubleSlider {
     public readonly thumbSize: number
     public readonly el: HTMLElement
     private readonly autoUpdate: boolean
-    private readonly emitEvents: boolean
+
     private readonly diff: HTMLElement | null
     private readonly sliderMin: Thumb
     private readonly sliderMax: Thumb
+    private emitEvents: boolean
     private min: number
     private max: number
     private width: number
@@ -83,7 +84,7 @@ export default class DoubleSlider {
         return val
     }
 
-    public change(): void {
+    public change(overrideEmit = false): void {
         const newMin = this.sliderMin.getPercent(), newMax = this.sliderMax.getPercent()
         if (newMax - newMin - 1 <= 0) {
             this.sliderMin.setPercent(this.min, false)
@@ -93,7 +94,7 @@ export default class DoubleSlider {
         this.min = newMin
         this.max = newMax
         this.updateDiff()
-        if (!this.emitEvents) return;
+        if (!this.emitEvents || overrideEmit) return;
         this.el.dispatchEvent(new CustomEvent("change", {detail: {target: this}}))
     }
 
@@ -105,18 +106,18 @@ export default class DoubleSlider {
         return this.max
     }
 
-    public setMin(num = 0) {
+    public setMin(num = 0, emit = true) {
         if (num >= this.max) return
         this.min = num
         this.sliderMin.setPercent(this.min)
-        this.change()
+        this.change(!emit)
     }
 
-    public setMax(num = 0) {
+    public setMax(num = 0, emit = true) {
         if (num <= this.min) return
         this.max = num
         this.sliderMax.setPercent(this.max)
-        this.change()
+        this.change(!emit)
     }
 
     private updateDiff(): void {
