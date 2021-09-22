@@ -1,16 +1,16 @@
 "use strict";
 exports.__esModule = true;
-var DoubleSlider = /** @class */ (function () {
-    function DoubleSlider(el, min, max, sliderWidth, autoUpdate, emitEvents) {
+var DoubleSlider = (function () {
+    function DoubleSlider(el, min, max, thumbSize, autoUpdate, emitEvents) {
         var _this = this;
         if (min === void 0) { min = 0; }
         if (max === void 0) { max = 100; }
-        if (sliderWidth === void 0) { sliderWidth = 16; }
+        if (thumbSize === void 0) { thumbSize = 16; }
         if (autoUpdate === void 0) { autoUpdate = true; }
         if (emitEvents === void 0) { emitEvents = true; }
         this.min = min;
         this.max = max;
-        this.sliderWidth = sliderWidth;
+        this.thumbSize = thumbSize;
         this.autoUpdate = autoUpdate;
         this.emitEvents = emitEvents;
         if (typeof el === "string")
@@ -29,6 +29,17 @@ var DoubleSlider = /** @class */ (function () {
         this.diff = this.el.querySelector(".track-diff");
         window.addEventListener("mousemove", function (event) { return _this.mouseX = event.x; });
         window.addEventListener("mouseup", function () {
+            _this.sliderMin.stopDrag();
+            _this.sliderMax.stopDrag();
+        });
+        window.addEventListener("touchmove", function (event) {
+            event = (typeof event.originalEvent === "undefined") ? event : event.originalEvent;
+            var touch = event.touches[0] || event.changedTouches[0];
+            if (!touch)
+                return;
+            _this.mouseX = touch.pageX;
+        });
+        window.addEventListener("touchend", function () {
             _this.sliderMin.stopDrag();
             _this.sliderMax.stopDrag();
         });
@@ -92,7 +103,7 @@ var DoubleSlider = /** @class */ (function () {
     return DoubleSlider;
 }());
 exports["default"] = DoubleSlider;
-var Thumb = /** @class */ (function () {
+var Thumb = (function () {
     function Thumb(el, parent) {
         var _this = this;
         this.percent = 0;
@@ -101,19 +112,21 @@ var Thumb = /** @class */ (function () {
             throw new Error("Thumb was undefined");
         this.parent = parent;
         this.el = el;
-        this.el.addEventListener("mousedown", function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            // @ts-ignore
-            _this.interval = setInterval(function () {
-                _this.drag();
-            }, 2);
-        });
+        this.el.addEventListener("mousedown", function (event) { return _this.update(event); });
+        this.el.addEventListener("touchstart", function (event) { return _this.update(event); });
     }
+    Thumb.prototype.update = function (event) {
+        var _this = this;
+        event.preventDefault();
+        event.stopPropagation();
+        this.interval = setInterval(function () {
+            _this.drag();
+        }, 2);
+    };
     Thumb.prototype.setPercent = function (percent, update) {
         if (update === void 0) { update = true; }
         this.percent = percent;
-        this.el.style.left = "calc(" + percent + "%" + " - " + this.parent.sliderWidth / 2 + "px)";
+        this.el.style.left = "calc(" + percent + "%" + " - " + this.parent.thumbSize / 2 + "px)";
         if (!update)
             return;
         this.parent.change();

@@ -1,4 +1,5 @@
 export default class DoubleSlider {
+
     public readonly thumbSize: number
     public readonly el: HTMLElement
     private readonly autoUpdate: boolean
@@ -38,6 +39,20 @@ export default class DoubleSlider {
 
         window.addEventListener("mousemove", event => this.mouseX = event.x)
         window.addEventListener("mouseup", () => {
+            this.sliderMin.stopDrag()
+            this.sliderMax.stopDrag()
+        })
+
+        // for explanation see https://stackoverflow.com/questions/41993176/determine-touch-position-on-tablets-with-javascript/61732450#61732450
+        window.addEventListener("touchmove", event => {
+            // @ts-ignore
+            event = (typeof event.originalEvent === "undefined") ? event : event.originalEvent
+            const touch = event.touches[0] || event.changedTouches[0]
+            if (!touch) return
+            this.mouseX = touch.pageX
+        })
+
+        window.addEventListener("touchend", () => {
             this.sliderMin.stopDrag()
             this.sliderMax.stopDrag()
         })
@@ -102,6 +117,7 @@ export default class DoubleSlider {
 }
 
 class Thumb {
+
     public readonly el: HTMLElement
 
     private percent = 0
@@ -114,14 +130,17 @@ class Thumb {
         this.parent = parent
 
         this.el = el
-        this.el.addEventListener("mousedown", event => {
-            event.preventDefault()
-            event.stopPropagation()
-            // @ts-ignore
-            this.interval = setInterval(() => {
-                this.drag()
-            }, 2)
-        })
+        this.el.addEventListener("mousedown", event => this.update(event))
+        this.el.addEventListener("touchstart", event => this.update(event))
+    }
+
+    private update(event: Event) : void {
+        event.preventDefault()
+        event.stopPropagation()
+        // @ts-ignore
+        this.interval = setInterval(() => {
+            this.drag()
+        }, 2)
     }
 
     public setPercent(percent: number, update = true) {
