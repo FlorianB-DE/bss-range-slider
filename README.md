@@ -26,7 +26,7 @@ new DoubleSlider(el: HTMLElement | string, min: number,
     max: number, thumbSize: number, autoUpdate: boolean, emitEvents: boolean)
 ```
 
-####min, max: position the sliders are at initialisation (in percent) (default 0, 100)
-####thumbSize: only modify when overwriting the --thumb-size css variable and set it to the value in px (default: 16)
-####autoUpdate: if set to true (default) the boundingClientRect gets updated. Only set to false if you are sure your element never changes
-####emitEvents: if set to true (default) a "change" event gets emitted
+#### min, max: position the sliders are at initialisation (in percent) (default 0, 100)
+#### thumbSize: only modify when overwriting the --thumb-size css variable and set it to the value in px (default: 16)
+#### autoUpdate: if set to true (default) the boundingClientRect gets updated. Only set to false if you are sure your element never changes
+#### emitEvents: if set to true (default) a "change" event gets emitted
