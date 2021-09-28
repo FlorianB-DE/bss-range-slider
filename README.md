@@ -10,13 +10,15 @@ html: <br>
 <div class="bs-multi-range">
     <div class="track">
         <div class="thumb upper"></div>
-           <div class="thumb lower"></div>
+        <div class="thumb lower" style="--thumb-color: yellow"></div>
         <div class="track-diff"></div>
     </div>
 </div>
 ```
 
 (track-diff is optional)
+
+Thumb color can be changed via CSS variable
 
 js: 
 

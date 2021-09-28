@@ -18,7 +18,7 @@
     height: var(--thumb-size, 16px);
 
     background: dodgerblue;
-    background: var(--bs-blue, dodgerblue);
+    background: var(--thumb-color, var(--bs-blue, dodgerblue));
 
     border-radius: 100%;
 
