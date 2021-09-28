@@ -1,6 +1,6 @@
 {
   "name": "bootstrap-double-slider",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "bootstrap style multi-range slider",
   "main": "dist/index.js",
   "scripts": {
