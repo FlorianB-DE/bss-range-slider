@@ -23,9 +23,14 @@ export default class DoubleSlider {
         this.autoUpdate = autoUpdate
         this.emitEvents = emitEvents
 
-        if (typeof el === "string") this.el = document.querySelector(el)
-        else this.el = el
-        if (!this.el) throw new Error("Element was undefined")
+        this.mouseX = 0
+
+        if (typeof el === "string") {
+            const tempEl = document.querySelector(el);
+            if (!tempEl) throw new Error("Element was undefined")
+            el = tempEl as HTMLElement
+        }
+        this.el = el
 
         if (clickTrack) {
             const track = this.el.querySelector(".track") as HTMLElement | null

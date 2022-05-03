@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  install:
+    image: alpine/node:latest
+    command: ["npm", "install"]
+    working_dir: /app
+    volumes:
+      - ./:/app
+
+  build:
+    image: alpine/node:latest
+    command: ["npm", "run", "build"]
+    working_dir: /app
+    volumes:
+      - ./:/app

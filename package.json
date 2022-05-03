@@ -4,7 +4,7 @@
   "description": "bootstrap style multi-range slider",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc && uglifycss dist/double-slider.css > dist/double-slider.min.css && uglifyjs dist/doubleSlider.js > dist/doubleSlider.min.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/florianq-two/bss-range-slider/issues"
   },
-  "homepage": ""
+  "homepage": "",
+  "devDependencies": {
+    "typescript": "latest",
+    "uglify-js": "latest",
+    "uglifycss": "latest"
+  }
 }
