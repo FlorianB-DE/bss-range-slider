@@ -1,7 +1,0 @@
-demo
-.idea
-tsconfig.json
-node_modules
-.gitignore
-.npmignore
-docker-compose.yml

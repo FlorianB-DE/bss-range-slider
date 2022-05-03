@@ -1,29 +1,26 @@
 {
-  "name": "bootstrap-double-slider",
-  "version": "1.0.7",
-  "description": "bootstrap style multi-range slider",
-  "main": "dist/index.js",
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
   "scripts": {
-    "build": "tsc && uglifycss dist/double-slider.css > dist/double-slider.min.css && uglifyjs dist/doubleSlider.js > dist/doubleSlider.min.js"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/florianq-two/bss-range-slider.git"
   },
-  "keywords": [
-    "slider",
-    "double-slider",
-    "bootstrap"
-  ],
   "author": "Florian Mirko Becker",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/florianq-two/bss-range-slider/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/florianq-two/bss-range-slider#readme",
   "devDependencies": {
-    "typescript": "latest",
-    "uglify-js": "latest",
-    "uglifycss": "latest"
+    "typescript": "^4.6.4",
+    "vite": "^2.9.7"
+  },
+  "dependencies": {
+    "bootstrap-double-slider": "^1.0.7"
   }
 }
