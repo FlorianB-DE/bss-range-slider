@@ -1,6 +1,10 @@
 # bss-range-slider
 Bootstrap Style Multi-Range Slider
 
+<br>
+try it yourself: https://florianq-two.github.io/bss-range-slider/
+<br>
+
 ## !!! PLEASE DON'T USE VERSIONS BELOW 1.1 SINCE THE USAGE HAS CHANGED !!!
 
 Licence: MIT Licence <br>
