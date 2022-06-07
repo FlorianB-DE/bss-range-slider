@@ -7,6 +7,13 @@ services:
     volumes:
       - ./:/app
 
+  build:
+    image: node:lts-slim
+    command: npm run build
+    working_dir: /app
+    volumes:
+      - ./:/app
+
   dev:
     image: node:lts-slim
     command: npm run dev
