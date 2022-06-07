@@ -1,8 +1,9 @@
 {
   "name": "bootstrap-double-slider",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "bootstrap style multi-range slider",
   "main": "dist/doubleSlider.min.js",
+  "types": "dist/doubleSlider.d.ts",
   "scripts": {
     "build": "tsc && uglifycss src/double-slider.css > dist/double-slider.min.css && uglifyjs dist/doubleSlider.js > dist/doubleSlider.min.js"
   },
