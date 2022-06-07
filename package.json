@@ -21,6 +21,6 @@
     "vite": "^2.9.7"
   },
   "dependencies": {
-    "bootstrap-double-slider": "^1.0.7"
+    "bootstrap-double-slider": ">=1.1"
   }
 }
