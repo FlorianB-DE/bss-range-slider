@@ -2,16 +2,16 @@
   "name": "demo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "build": "webpack"
+    "dev": "vite"
   },
   "author": "",
   "license": "",
   "dependencies": {
-    "bootstrap-double-slider": "latest"
+    "bootstrap-double-slider": ">=1.0.8"
   },
   "devDependencies": {
-    "webpack": "latest"
+    "vite": "latest"
   }
 }

@@ -1,4 +1,4 @@
-export default class DoubleSlider {
+export class DoubleSlider {
 
     public readonly thumbSize: number
     public readonly el: HTMLElement

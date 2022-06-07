@@ -1,15 +1,31 @@
 version: "3.8"
 services:
   install:
-    image: alpine/node:latest
+    image: node:lts-slim
     command: ["npm", "install"]
     working_dir: /app
     volumes:
       - ./:/app
 
   build:
-    image: alpine/node:latest
+    image: node:lts-slim
     command: ["npm", "run", "build"]
     working_dir: /app
+    volumes:
+      - ./:/app
+
+  demo:
+    image: node:lts-slim
+    command: ["npm", "run", "dev"]
+    working_dir: /app/demo
+    volumes:
+      - ./:/app
+    ports:
+      - "3000:3000"
+
+  console:
+    image: node:lts-slim
+    working_dir: /app
+    command: /bin/bash
     volumes:
       - ./:/app
