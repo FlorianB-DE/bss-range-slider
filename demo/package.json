@@ -9,7 +9,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "bootstrap-double-slider": ">=1.0.8"
+    "bootstrap-double-slider": ">=1.1"
   },
   "devDependencies": {
     "vite": "latest"
